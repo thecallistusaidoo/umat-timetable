@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>UMaT Timetable Maker</title>
+<meta name="description" content="Get your personal class timetable from the UMaT general teaching timetable (Essikado and Tarkwa campuses) and save it as a PDF. Made by Callistus Aidoo.">
+<meta name="author" content="Callistus Aidoo">
+<meta name="theme-color" content="#f2f2f7" id="themeColor">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Timetable">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>(function(){var t="light";try{t=JSON.parse(localStorage.getItem("theme"))||"light"}catch(e){}document.documentElement.setAttribute("data-theme",t)})();</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="top" id="top"><div class="top-in"><span></span><span class="top-title">Timetable</span><button type="button" class="icon-btn" id="themeBtn" aria-label="Change appearance"></button></div></div>
+
+<main class="wrap">
+  <div class="large">
+    <div class="eyebrow" id="eyebrow">UMaT</div>
+    <h1>Timetable</h1>
+    <p class="lede">Enter your programme and level to get your own week from the general timetable.</p>
+  </div>
+
+  <div class="offline" id="offline" hidden>You're offline. Showing the timetable saved on this device.</div>
+
+  <div class="layout">
+  <div class="side">
+  <section class="sec" aria-labelledby="h-campus">
+    <h2 class="sec-h" id="h-campus">Campus</h2>
+    <div class="group">
+      <div class="row seg-row" style="padding-block:8px"><div class="seg" role="radiogroup" aria-labelledby="h-campus" id="campusSeg"><span class="thumb"></span></div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-src">
+    <h2 class="sec-h" id="h-src">Timetable in use</h2>
+    <div class="group">
+      <div class="row">
+        <div class="row-main">
+          <div class="row-title" id="srcName">Loading</div>
+          <div class="row-sub" id="srcSub"></div>
+        </div>
+      </div>
+      <input type="file" id="file" class="file" accept=".xlsx,.xls,.xlsm,.ods">
+      <label for="file" class="row action" id="uploadRow">Upload a newer timetable</label>
+      <button type="button" class="row action link" id="backOfficial" style="width:100%" hidden>Use the official timetable</button>
+    </div>
+    <p class="sec-f" id="srcMsg" role="status">An uploaded file only changes what you see on this device.</p>
+
+    <div id="admin" hidden>
+      <h2 class="sec-h" style="margin-top:22px">Administrator</h2>
+      <div class="group">
+        <div class="row"><span class="row-label">Campus</span><span class="row-sub" id="adminCampus" style="margin-left:auto"></span></div>
+        <div class="row"><label class="row-label" for="relTitle">Title</label><input id="relTitle" maxlength="80" placeholder="Semester One 2026/2027"></div>
+        <div class="row"><label class="row-label" for="relDate">Released</label><input type="date" id="relDate"></div>
+        <button type="button" class="row action link" id="publishBtn" style="width:100%">Publish for everyone</button>
+        <button type="button" class="row action link" id="exportBtn" style="width:100%">Download the file instead</button>
+      </div>
+      <p class="sec-f" id="adminMsg" role="status">Upload the Excel file above first, check it looks right, then publish.</p>
+      <h2 class="sec-h" style="margin-top:22px">Publishing settings</h2>
+      <div class="group">
+        <div class="row"><label class="row-label" for="ghRepo">Repository</label><input id="ghRepo" placeholder="username/umat-timetable" autocapitalize="off" spellcheck="false"></div>
+        <div class="row"><label class="row-label" for="ghToken">Token</label><input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off"></div>
+      </div>
+      <p class="sec-f">Saved only on this device. You set these once. See the README for how to get a token.</p>
+    </div>
+  </section>
+
+  <form id="f" autocomplete="off" class="sec" aria-labelledby="h-you">
+    <h2 class="sec-h" id="h-you">Your programme</h2>
+    <div class="group">
+      <div class="row"><label class="row-label" for="prog">Code</label><input id="prog" maxlength="2" placeholder="DS" value="DS" list="progs" autocapitalize="characters"><datalist id="progs"></datalist></div>
+      <div class="row seg-row"><span class="row-label" id="l-level">Level</span>
+        <div class="seg" role="radiogroup" aria-labelledby="l-level">
+          <span class="thumb"></span>
+          <input type="radio" name="level" id="lv1" value="1"><label for="lv1">100</label>
+          <input type="radio" name="level" id="lv2" value="2"><label for="lv2">200</label>
+          <input type="radio" name="level" id="lv3" value="3" checked><label for="lv3">300</label>
+          <input type="radio" name="level" id="lv4" value="4"><label for="lv4">400</label>
+        </div>
+      </div>
+      <div class="row seg-row" id="grpRow"><span class="row-label" id="l-grp">Group</span>
+        <div class="seg" role="radiogroup" aria-labelledby="l-grp" id="grpSeg"><span class="thumb"></span></div>
+      </div>
+    </div>
+    <div class="chips" id="codes" aria-label="Programme codes in this timetable"></div>
+  </form>
+
+  <section class="sec">
+    <div class="summary">
+      <h2 id="title">DS, Level 300</h2>
+      <span class="count" id="sub"></span>
+    </div>
+    <div class="btns">
+      <button class="btn" id="pdf" type="button">Download PDF</button>
+      <button class="btn secondary" id="sharePdf" type="button">Share</button>
+    </div>
+    <div class="msg" id="msg" role="status"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-cal">
+    <h2 class="sec-h" id="h-cal">Add to calendar</h2>
+    <div class="group">
+      <div class="row seg-row"><span class="row-label" id="l-remind">Alert</span>
+        <div class="seg" role="radiogroup" aria-labelledby="l-remind">
+          <span class="thumb"></span>
+          <input type="radio" name="remind" id="rm0" value="0"><label for="rm0">None</label>
+          <input type="radio" name="remind" id="rm15" value="15" checked><label for="rm15">15 min</label>
+          <input type="radio" name="remind" id="rm30" value="30"><label for="rm30">30 min</label>
+          <input type="radio" name="remind" id="rm60" value="60"><label for="rm60">1 hr</label>
+        </div>
+      </div>
+      <div class="row"><label class="row-label" for="until" style="width:auto">Classes end</label><input type="date" id="until"></div>
+      <button type="button" class="row action link" id="addCal" style="width:100%">Add classes to my calendar</button>
+      <button type="button" class="row action link" id="shareCal" style="width:100%">Send calendar file</button>
+    </div>
+    <p class="sec-f" id="calMsg" role="status">Each class repeats every week until the end date, with an alert before it starts. Set the end date to the last day of lectures.</p>
+  </section>
+
+  <section class="sec look" aria-labelledby="h-look">
+    <h2 class="sec-h" id="h-look">Appearance</h2>
+    <div class="group">
+      <div class="row seg-row" style="padding-block:8px">
+        <div class="seg" role="radiogroup" aria-labelledby="h-look">
+          <span class="thumb"></span>
+          <input type="radio" name="theme" id="thL" value="light"><label for="thL">Light</label>
+          <input type="radio" name="theme" id="thD" value="dark"><label for="thD">Dark</label>
+          <input type="radio" name="theme" id="thA" value="auto"><label for="thA">Auto</label>
+        </div>
+      </div>
+    </div>
+    <p class="sec-f">Auto follows your phone's light or dark setting. You can also tap the icon at the top right.</p>
+  </section>
+  </div>
+  <div class="main" id="out" aria-live="polite"></div>
+  </div>
+
+  <footer class="foot">
+    <p class="note">Times come from the merged cells in the timetable, so a two-hour block shows as one session. Courses with a group letter (A, B, C and so on) are split groups. Pick your group to hide the others.</p>
+    <div>Made by <b>Callistus Aidoo</b></div>
+    <div><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></div>
+    <p class="disc">An independent student project. Not an official University of Mines and Technology service. Always confirm times with your department.</p>
+    <div id="installHint"></div>
+  </footer>
+</main>
+
+<div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle" hidden>
+  <div class="picker-in">
+    <div class="picker-eyebrow">UMaT Timetable</div>
+    <h2 id="pickerTitle">Which campus are you on?</h2>
+    <p>You can change this any time at the top of the app.</p>
+    <div class="picker-btns" id="pickerBtns"></div>
+  </div>
+</div>
+
+<div class="notice" id="notice" role="region" aria-label="Privacy notice" hidden>
+  <div class="notice-in">
+    <p>No cookies and no tracking. Your choices are saved only on this phone so the app works offline.</p>
+    <div class="notice-actions">
+      <a class="btn secondary" href="privacy.html">Details</a>
+      <button type="button" class="btn" id="noticeOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/jspdf.plugin.autotable.min.js"></script>
+<script src="parser.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

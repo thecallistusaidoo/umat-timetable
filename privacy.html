@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacy · UMaT Timetable Maker</title>
+<meta name="author" content="Callistus Aidoo">
+<meta name="theme-color" content="#f2f2f7" id="themeColor">
+<link rel="icon" href="icons/icon-192.png">
+<script>(function(){var t="light";try{t=JSON.parse(localStorage.getItem("theme"))||"light"}catch(e){}document.documentElement.setAttribute("data-theme",t)})();</script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="top"><div class="top-in"><a class="back" href="./">‹ Timetable</a><span class="top-title" style="opacity:1">Privacy</span><span style="width:84px"></span></div></div>
+<main class="wrap doc">
+  <div class="large"><h1>Privacy</h1><p class="lede">Last updated 15 October 2026</p></div>
+
+  <section class="sec"><div class="group prose">
+    <p><b>The short version:</b> this app doesn't use cookies, doesn't track you, has no accounts and no ads. Everything it does happens on your own phone.</p>
+  </div></section>
+
+  <section class="sec"><h2 class="sec-h">What is saved on your device</h2><div class="group prose">
+    <p>To remember your choices and work offline, the app saves these in your browser's storage on your device only:</p>
+    <ul>
+      <li>your campus, programme code, level and group</li>
+      <li>your appearance choice (light, dark or auto)</li>
+      <li>your calendar alert time and the date classes end</li>
+      <li>a timetable you upload yourself, if you do</li>
+      <li>whether you've seen the privacy notice</li>
+      <li>a copy of the app's files, so it opens without internet</li>
+    </ul>
+    <p>None of this is sent to the developer or anyone else. You can delete it all below.</p>
+  </div></section>
+
+  <section class="sec"><h2 class="sec-h">Files you upload or create</h2><div class="group prose">
+    <p>When you upload a timetable, the Excel file is read on your phone and is not uploaded anywhere. PDFs and calendar files are made on your phone too. When you share one, it goes only to the app you choose, such as WhatsApp or email.</p>
+  </div></section>
+
+  <section class="sec"><h2 class="sec-h">Hosting</h2><div class="group prose">
+    <p>The website is served by a hosting company. Like most websites, its servers may keep standard technical logs, such as IP address, browser type and the time of a visit, for security and to keep the site running. The developer doesn't use these logs to identify anyone. See your hosting provider's privacy policy for details.</p>
+  </div></section>
+
+  <section class="sec"><h2 class="sec-h">Your data, your choice</h2><div class="group">
+    <button type="button" class="row action link danger" id="clear" style="width:100%">Delete everything this app saved on this device</button>
+  </div>
+  <p class="sec-f" id="clearMsg" role="status">This removes your saved choices, any uploaded timetable and the offline copy. Events already added to your calendar stay there; delete those in your calendar app.</p></section>
+
+  <section class="sec"><h2 class="sec-h">Changes and contact</h2><div class="group prose">
+    <p>If the app ever starts collecting information (for example, visitor statistics), this page will be updated first and you will be asked before anything is turned on.</p>
+    <p>The app is built and run by Callistus Aidoo. Questions about privacy can be sent to the developer.</p>
+  </div></section>
+
+  <footer class="foot"><div>Made by <b>Callistus Aidoo</b></div><div><a href="./">Timetable</a> · <a href="terms.html">Terms</a></div></footer>
+</main>
+<script>
+document.getElementById("clear").addEventListener("click", async () => {
+  const msg = document.getElementById("clearMsg");
+  try { localStorage.clear(); } catch (e) {}
+  try { if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch (e) {}
+  try { if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); } catch (e) {}
+  msg.textContent = "Done. Everything this app saved on this device has been deleted.";
+});
+</script>
+</body>
+</html>
